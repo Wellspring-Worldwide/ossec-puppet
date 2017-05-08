@@ -31,6 +31,7 @@ class ossec::server (
   $mysql_name                          = undef,
   $mysql_password                      = undef,
   $mysql_username                      = undef,
+  $server_package                      = $::ossec::params::server_package,
   $server_package_version              = 'installed',
   $manage_repos                        = true,
   $manage_epel_repo                    = true,
@@ -74,7 +75,7 @@ class ossec::server (
   }
 
   # install package
-  package { $ossec::params::server_package:
+  package { $server_package:
     ensure  => $server_package_version
   }
 
