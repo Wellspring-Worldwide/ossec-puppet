@@ -33,6 +33,7 @@ class ossec::server (
   $mysql_username                      = undef,
   $server_package                      = $::ossec::params::server_package,
   $server_package_version              = 'installed',
+  $server_service                      = $::ossec::params::server_service,
   $manage_repos                        = true,
   $manage_epel_repo                    = true,
   $manage_client_keys                  = true,
@@ -79,7 +80,7 @@ class ossec::server (
     ensure  => $server_package_version
   }
 
-  service { $ossec::params::server_service:
+  service { $server_service:
     ensure    => running,
     enable    => true,
     hasstatus => $ossec::params::service_has_status,
