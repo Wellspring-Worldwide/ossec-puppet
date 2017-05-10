@@ -72,7 +72,7 @@ class ossec::server (
     } else {
       include mysql::client
     }
-    Class['mysql::client'] ~> Service[$ossec::params::server_service]
+    Class['mysql::client'] ~> Service[$server_service]
   }
 
   # install package
@@ -84,7 +84,7 @@ class ossec::server (
     ensure    => running,
     enable    => true,
     hasstatus => $ossec::params::service_has_status,
-    pattern   => $ossec::params::server_service,
+    pattern   => $server_service,
     provider  => $ossec_service_provider,
     require   => Package[$server_package],
   }
@@ -95,13 +95,13 @@ class ossec::server (
     group   => $ossec::params::config_group,
     mode    => $ossec::params::config_mode,
     require => Package[$server_package],
-    notify  => Service[$ossec::params::server_service]
+    notify  => Service[$server_service]
   }
   concat::fragment { 'ossec_process_list_10' :
     target  => $ossec::params::processlist_file,
     content => template('ossec/10_process_list.erb'),
     order   => 10,
-    notify  => Service[$ossec::params::server_service]
+    notify  => Service[$server_service]
   }
 
   # configure ossec
@@ -110,13 +110,13 @@ class ossec::server (
     group   => $ossec::params::config_group,
     mode    => $ossec::params::config_mode,
     require => Package[$server_package],
-    notify  => Service[$ossec::params::server_service]
+    notify  => Service[$server_service]
   }
   concat::fragment { 'ossec.conf_10' :
     target  => $ossec::params::config_file,
     content => template($ossec_conf_template),
     order   => 10,
-    notify  => Service[$ossec::params::server_service]
+    notify  => Service[$server_service]
   }
 
   if $use_mysql {
@@ -130,7 +130,7 @@ class ossec::server (
       target  => $ossec::params::config_file,
       content => template('ossec/80_ossec.conf.erb'),
       order   => 80,
-      notify  => Service[$ossec::params::server_service]
+      notify  => Service[$server_service]
     }
 
     # Enable the database daemon in the .process_list
@@ -138,7 +138,7 @@ class ossec::server (
       target  => $ossec::params::processlist_file,
       content => template('ossec/20_process_list.erb'),
       order   => 20,
-      notify  => Service[$ossec::params::server_service]
+      notify  => Service[$server_service]
     }
   }
 
@@ -146,7 +146,7 @@ class ossec::server (
     target  => $ossec::params::config_file,
     content => template('ossec/90_ossec.conf.erb'),
     order   => 90,
-    notify  => Service[$ossec::params::server_service]
+    notify  => Service[$server_service]
   }
 
   if ( $manage_client_keys == true ) {
@@ -154,14 +154,14 @@ class ossec::server (
       owner   => $ossec::params::keys_owner,
       group   => $ossec::params::keys_group,
       mode    => $ossec::params::keys_mode,
-      notify  => Service[$ossec::params::server_service],
+      notify  => Service[$server_service],
       require => Package[$server_package],
     }
     concat::fragment { 'var_ossec_etc_client.keys_end' :
       target  => $ossec::params::keys_file,
       order   => 99,
       content => "\n",
-      notify  => Service[$ossec::params::server_service]
+      notify  => Service[$server_service]
     }
   }
 
@@ -170,7 +170,7 @@ class ossec::server (
     owner   => $ossec::params::config_owner,
     group   => $ossec::params::config_group,
     mode    => $ossec::params::config_mode,
-    notify  => Service[$ossec::params::server_service],
+    notify  => Service[$server_service],
     require => Package[$server_package]
   }
 
@@ -179,7 +179,7 @@ class ossec::server (
     owner   => $ossec::params::config_owner,
     group   => $ossec::params::config_group,
     mode    => $ossec::params::config_mode,
-    notify  => Service[$ossec::params::server_service],
+    notify  => Service[$server_service],
     require => Package[$server_package]
   }
 
@@ -188,7 +188,7 @@ class ossec::server (
     owner   => $ossec::params::config_owner,
     group   => $ossec::params::config_group,
     mode    => $ossec::params::config_mode,
-    notify  => Service[$ossec::params::server_service],
+    notify  => Service[$server_service],
     require => Package[$server_package]
   }
 
