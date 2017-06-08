@@ -138,7 +138,7 @@ class ossec::client(
     # Is this really Linux only?
     $ossec_server_address = pick($ossec_server_ip, $ossec_server_hostname)
     exec { 'agent-auth':
-      command => "/var/ossec/bin/agent-auth -m ${ossec_server_address} -A ${::fqdn} -D /var/ossec/",
+      command => "/var/ossec/bin/agent-auth -m ${ossec_server_address} -A ${::fqdn}",
       creates => '/var/ossec/etc/client.keys',
       require => Package[$agent_package_name],
     }
