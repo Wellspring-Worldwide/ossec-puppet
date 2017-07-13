@@ -28,6 +28,7 @@ class ossec::client(
   $ossec_rootcheck_checkports = true,
   $ossec_rootcheck_checkfiles = true,
   $ossec_conf_template        = 'ossec/10_ossec_agent.conf.erb',
+  $ossec_conf_file            = $ossec::params::config_file,
 ) inherits ossec::params {
   validate_bool(
     $ossec_active_response, $ossec_rootcheck,
@@ -89,7 +90,7 @@ class ossec::client(
     require   => Package[$agent_package_name],
   }
 
-  concat { $ossec::params::config_file:
+  concat { $ossec_conf_file:
     owner   => $ossec::params::config_owner,
     group   => $ossec::params::config_group,
     mode    => $ossec::params::config_mode,
@@ -98,7 +99,7 @@ class ossec::client(
   }
 
   concat::fragment { 'ossec.conf_10' :
-    target  => $ossec::params::config_file,
+    target  => $ossec_conf_file,
     content => template($ossec_conf_template),
     order   => 10,
     notify  => Service[$agent_service_name]
@@ -106,7 +107,7 @@ class ossec::client(
 
   if ( $ar_repeated_offenders != '' and $ossec_active_response == true ) {
     concat::fragment { 'repeated_offenders' :
-      target  => $ossec::params::config_file,
+      target  => $ossec_conf_file,
       content => template('ossec/ar_repeated_offenders.erb'),
       order   => 55,
       notify  => Service[$agent_service_name]
@@ -114,7 +115,7 @@ class ossec::client(
   }
 
   concat::fragment { 'ossec.conf_99' :
-    target  => $ossec::params::config_file,
+    target  => $ossec_conf_file,
     content => template('ossec/99_ossec_agent.conf.erb'),
     order   => 99,
     notify  => Service[$agent_service_name]
